@@ -2,3 +2,6 @@ numpy
 opencv-python
 scikit-learn
 tensorflow
+joblib
+matplotlib
+seaborn
