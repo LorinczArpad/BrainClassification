@@ -53,12 +53,12 @@ def preprocess_image(filepath):
     
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     edges = cv2.dilate(edges, kernel, iterations=1)
-
+   
     edges = cv2.normalize(edges, None, 0, 255, cv2.NORM_MINMAX)
 def get_processed_data():
     train_images, train_labels = load_dataset(TRAINING_PATH)
     test_images, test_labels = load_dataset(TESTING_PATH)
-    return train_images / 255, train_labels,test_images/ 255 ,test_labels
+    return train_images,train_labels,test_images,test_labels
 def train_svm(train_images,train_labels):
     print("Training started.")
     svm = SVC(kernel='linear', C=1.0, random_state=42)
