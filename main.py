@@ -43,7 +43,7 @@ def preprocess_image(filepath):
     img = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
     
     img = cv2.resize(img, TARGET_SIZE)
-    
+    #img = cv2.equalizeHist(img)    
     img = cv2.GaussianBlur(img, (3, 3), 0)
 
     sobel_x = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=3)
@@ -59,7 +59,7 @@ def get_processed_data():
     return train_images,train_labels,test_images,test_labels
 def train_svm(train_images,train_labels):
     print("Training started.")
-    svm = SVC(kernel='linear', C=1.0, random_state=42)
+    svm = SVC(kernel='rbf', C=1.0, gamma='scale', random_state=42)
     svm.fit(train_images, train_labels)
     print("Training ended.")
     return svm
