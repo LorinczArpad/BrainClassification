@@ -30,31 +30,29 @@ def load_dataset(folder_path):
                     # Előfeldolgozás
                     processed_image = preprocess_image(img_path)
                     #Kimentés
-                 
+                    if(class_name == 'glioma' and SAVE_PREPROCESSED and folder_path.endswith('Training')):
+                        filename = os.path.basename(img_path)
+                        save_path = os.path.join(SAVE_DIRECTORY, filename)
+                        cv2.imwrite(save_path, processed_image)
+
                     images.append(processed_image.flatten()) # Normalizálás az SVM nek
                     labels.append(class_idx)  
     return np.array(images, dtype=np.float32), np.array(labels)
 
 def preprocess_image(filepath):
-
-
     img = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
     
     img = cv2.resize(img, TARGET_SIZE)
     
-    img = cv2.GaussianBlur(img, (5, 5), 0)
-    
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    img = clahe.apply(img)
+    img = cv2.GaussianBlur(img, (3, 3), 0)
 
     sobel_x = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=3)
     sobel_y = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=3)
     edges = cv2.magnitude(sobel_x, sobel_y)
     
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    edges = cv2.dilate(edges, kernel, iterations=1)
-   
-    edges = cv2.normalize(edges, None, 0, 255, cv2.NORM_MINMAX)
+
+    return edges
+    #edges = cv2.normalize(edges, None, 0, 255, cv2.NORM_MINMAX)
 def get_processed_data():
     train_images, train_labels = load_dataset(TRAINING_PATH)
     test_images, test_labels = load_dataset(TESTING_PATH)
