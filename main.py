@@ -80,7 +80,7 @@ def test_svm(test_images,test_labels,svm,save_path="evaluation.png"):
     cm = confusion_matrix(test_labels, predictions)
     
     plt.figure(figsize=(10, 8))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=np.unique(test_labels), yticklabels=np.unique(test_labels))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=np.unique(CLASS_NAMES), yticklabels=np.unique(CLASS_NAMES))
     plt.title('Confusion Matrix')
     plt.xlabel('Predicted Labels')
     plt.ylabel('True Labels')
@@ -93,7 +93,7 @@ def test_svm(test_images,test_labels,svm,save_path="evaluation.png"):
     recall = [report[cat]['recall'] for cat in categories]
     f1_score = [report[cat]['f1-score'] for cat in categories]
 
-    x = np.arange(len(categories))  
+    x = np.arange(len(categories)) 
     width = 0.25  
 
     plt.figure(figsize=(12, 6))
@@ -101,7 +101,7 @@ def test_svm(test_images,test_labels,svm,save_path="evaluation.png"):
     plt.bar(x, recall, width, label='Recall', color='salmon')
     plt.bar(x + width, f1_score, width, label='F1 Score', color='limegreen')
     
-    plt.xticks(x, categories, rotation=45, ha='right')
+    plt.xticks(x, np.unique(CLASS_NAMES), rotation=45, ha='right')
     plt.title('Classification Report')
     plt.xlabel('Categories')
     plt.ylabel('Score')
