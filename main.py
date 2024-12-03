@@ -50,9 +50,9 @@ def preprocess_image(filepath):
     sobel_y = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=3)
     edges = cv2.magnitude(sobel_x, sobel_y)
     
-
+    edges = cv2.normalize(edges, None, 0, 255, cv2.NORM_MINMAX) 
     return edges
-    #edges = cv2.normalize(edges, None, 0, 255, cv2.NORM_MINMAX)
+    
 def get_processed_data():
     train_images, train_labels = load_dataset(TRAINING_PATH)
     test_images, test_labels = load_dataset(TESTING_PATH)
@@ -67,9 +67,31 @@ def test_svm(test_images,test_labels,svm):
     predictions = svm.predict(test_images)
     print("Accuracy:", accuracy_score(test_labels, predictions))
     print("Classification Report:\n", classification_report(test_labels, predictions))
+def validate_svm_data(images, labels, data_name="Training"):
+    """
+    Validates if the given data is in the correct format for SVM training/testing.
+    """
+    if len(images.shape) != 2:
+        raise ValueError(f"{data_name} images should be 2D with shape (n_samples, n_features). Current shape: {images.shape}")
+    
+    if not np.issubdtype(images.dtype, np.number):
+        raise ValueError(f"{data_name} images should contain numerical values. Current dtype: {images.dtype}")
+    
+    if len(labels.shape) != 1:
+        raise ValueError(f"{data_name} labels should be 1D with shape (n_samples,). Current shape: {labels.shape}")
+    
+    if images.shape[0] != labels.shape[0]:
+        raise ValueError(f"Number of samples in {data_name} images and labels should match. "
+                         f"Images samples: {images.shape[0]}, Labels samples: {labels.shape[0]}")
+    
+    print(f"{data_name} data validation successful. Shape: {images.shape}, Labels: {labels.shape}")
 def main():
 
-    train_images,train_labels,test_images,test_labels  = get_processed_data()   
+    train_images,train_labels,test_images,test_labels  = get_processed_data()
+
+    validate_svm_data(train_images, train_labels, "Training")
+    validate_svm_data(test_images, test_labels, "Tesiting")
+    
     svm = train_svm( train_images,train_labels)
     test_svm(test_images,test_labels,svm)
 
